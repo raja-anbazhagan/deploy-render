@@ -10,27 +10,12 @@ app.post('/api/upload', (req, res) => {
     if (!image) {
         return res.status(400).send('Image data is required');
     }
-    let base64Data = image;
-    let fileExtension = 'png'; // default
-    if (image.startsWith('data:')) {
-        const commaIndex = image.indexOf(',');
-        if (commaIndex > 0) {
-            const header = image.substring(0, commaIndex);
-            const parts = header.split(':');
-            if (parts.length > 1) {
-                const mimeType = parts[1].split(';')[0];
-                const mimeParts = mimeType.split('/');
-                if (mimeParts.length > 1) {
-                    fileExtension = mimeParts[1];
-                }
-            }
-            base64Data = image.substring(commaIndex + 1);
-        }
-    }
+    // Always extract base64 part from data URL
+    const base64Data = image.split(',')[1];
     try {
         const buffer = Buffer.from(base64Data, 'base64');
         fs.writeFileSync(name, buffer);
-        res.send(`Image saved successfully as image.${fileExtension}`);
+        res.send(`Image saved successfully as ${name}`);
     } catch (e) {
         res.status(500).send('Error saving image: ' + e.message);
     }

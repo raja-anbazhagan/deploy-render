@@ -51,18 +51,20 @@ function App() {
         const newHeight = videoHeight * ratio;
         canvas.width = newWidth;
         canvas.height = newHeight;
+        console.log(canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, newWidth, newHeight);
-        const jpegData = canvas.toDataURL('image/jpeg');
-        const jpegData8 = canvas.toDataURL('image/jpeg', 0.8);
         const pngData = canvas.toDataURL('image/png');
-        const pngData8 = canvas.toDataURL('image/png',0.8);
+        const jpegData = canvas.toDataURL('image/jpeg', 1);
+        const jpegData8 = canvas.toDataURL('image/jpeg', 0.8);
+        const webpData = canvas.toDataURL('image/webp', 1);
+        const webpData8 = canvas.toDataURL('image/webp', 0.8);
 
         setCaptured(jpegData);
-        sendToAPI(jpegData, 'captured_image.jpg');
-        sendToAPI(jpegData8, 'captured_image_0.8.jpg');
-        sendToAPI(pngData, 'captured_image.png');
-        sendToAPI(pngData8, 'captured_image_0.8.png');
-
+        sendToAPI(pngData, '1.captured_image.png');
+        sendToAPI(jpegData, '2.captured_image.jpg');
+        sendToAPI(jpegData8, '3.captured_image_0.8.jpg');
+        sendToAPI(webpData, '4.captured_image.webp');
+        sendToAPI(webpData8, '5.captured_image_0.8.webp');
       }
     }
   };
@@ -77,7 +79,7 @@ function App() {
         body: JSON.stringify({ image: base64Data, name: name }),
       });
       if (response.ok) {
-        toast.success('Image uploaded successfully!');
+        toast.success(`Image ${name} uploaded successfully!`);
       } else {
         toast.error('Failed to upload image: ' + response.statusText);
       }
