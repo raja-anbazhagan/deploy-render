@@ -53,39 +53,17 @@ function App() {
         canvas.height = newHeight;
         console.log(canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, newWidth, newHeight);
-        const pngData = canvas.toDataURL('image/png');
-        const jpegData = canvas.toDataURL('image/jpeg', 1);
         const jpegData8 = canvas.toDataURL('image/jpeg', 0.8);
-        const webpData = canvas.toDataURL('image/webp', 1);
-        const webpData8 = canvas.toDataURL('image/webp', 0.8);
 
-        setCaptured(jpegData);
-        sendToAPI(pngData, '1.captured_image.png');
-        sendToAPI(jpegData, '2.captured_image.jpg');
-        sendToAPI(jpegData8, '3.captured_image_0.8.jpg');
-        sendToAPI(webpData, '4.captured_image.webp');
-        sendToAPI(webpData8, '5.captured_image_0.8.webp');
+        setCaptured(jpegData8);
+        // Download the image instead of uploading
+        const link = document.createElement('a');
+        link.href = jpegData8;
+        link.download = 'captured_image_0.8.jpg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
-    }
-  };
-
-  const sendToAPI = async (base64Data: string, name: string) => {
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: base64Data, name: name }),
-      });
-      if (response.ok) {
-        toast.success(`Image ${name} uploaded successfully!`);
-      } else {
-        toast.error('Failed to upload image: ' + response.statusText);
-      }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      toast.error('Error uploading image');
     }
   };
 
